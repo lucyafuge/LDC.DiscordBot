@@ -1,17 +1,19 @@
 ﻿import discord
 import clr
+import sys
 from discord.colour import Color
 from discord.embeds import Embed
 from discord.ext import commands
 from decouple import config
 from discord import app_commands
 
-clr.AddReference(r"D:\Programs\LDC\LDC.EnoaLibrary\bin\Debug\net6.0\LDC.EnoaLibrary.dll")
-clr.AddReference(r"D:\Programs\LDC\LDC.DiscordBot\libs\Microsoft.EntityFrameworkCore.dll")
+clr.AddReference(r"System")
+clr.AddReference(r"D:\Programs\LDC\LDC.ClassesLibrary\obj\Debug\LDC.ClassesLibrary.dll")
+clr.AddReference(r"D:\Programs\LDC\LDC.ClassesLibrary\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll")
+clr.AddReference(r"D:\Programs\LDC\LDC.ClassesLibrary\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll")
 
-from Microsoft.EntityFrameworkCore import DbContext
-from LDC.EnoaLibrary import EnoaLibrary
-from LDC.EnoaLibrary.Classes import SignContextInitializer
+from LDC.ClassesLibrary import *
+from System.Collections.Generic import *
 
 
 token = config('token',default='')
@@ -38,18 +40,24 @@ bot = Bot()
 
 @bot.hybrid_command(name = "sign", with_app_command = True, description = "Sign")
 async def test(ctx: commands.Context, flags: SignFlags):
-    cont = SignContextInitializer()
     lib = EnoaLibrary()
-    #lib = CDLL(r"D:\Programs\LDC\LDC.EnoaLibrary\bin\Debug\net6.0\LDC.EnoaLibrary.dll") 
-    #int_bunti = c_int(flags.bunti_1)
-    #int_ayur = c_int(flags.ayur_2)
-    #int_dodor = c_int(flags.dodor_3)
-    #int_takhar = c_int(flags.takhar_4)
-    #resp = lib.EnoaLibrary()
-    #GetSign(int_bunti, int_ayur, int_dodor, int_takhar)
+    signsResponce = lib.GetSign(flags.bunti_1, flags.ayur_2, flags.dodor_3, flags.takhar_4)
+    sign = signsResponce.Result
+    if(sign != None):
+        color = discord.Color
+        desc = f"\
+        Кости: ({sign.Bunti}, {sign.Ayur}, {sign.Dodor}, {sign.Takhar}) \n\n \
+        Сложность: {sign.Difficult} \n\n \
+        {sign.Description } \n\n \
+        Эффект: {sign.Effect} \n\n \
+        Успех: {sign.Success} \n\n \
+        Провал: {sign.Failure} \n\n \
+        "
+        embed = Embed(title=sign.Name, color=color.blue(), description=desc)
+    else:
+        color = discord.Color
+        embed = Embed(title="Ошибка", color=color.red(), description="Не было обнаружено знамение по переданным данным")
 
-    color = discord.Color
-    embed = Embed(title="Знамение", color=color.blue(), description="Описание знамения")
     await ctx.defer(ephemeral = False)
     await ctx.send(embed=embed)
 
