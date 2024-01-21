@@ -24,10 +24,10 @@
     <Compile Include="LDC.DiscordBot.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".env" />
+    <Folder Include="libs\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="libs\" />
+    <Content Include=".env" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
