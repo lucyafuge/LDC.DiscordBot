@@ -1,4 +1,5 @@
-﻿import Data
+﻿import random
+import Data
 import discord
 import clr
 import os
@@ -33,17 +34,18 @@ from System import *
 
 @tasks.loop(seconds=5)
 async def on_stream_online():
-    print("Test!!")
     general = bot.get_channel(int(Data.TwitcGeneralChannelID))
     stream = twich.checkIfLive(Data.TwitchUsersLoggins)
     message = t_controler.get_message()
     if(stream != "OFFLINE" and general != None):
+        print("[LDC] Stream online!")
         if(message == None):
             await t_controler.send_message(general=general, stream=stream)
         else:
             await t_controler.edit_message(stream=stream)
 
     if(stream == "OFFLINE" and message != None):
+        print("[LDC] Stream end!")
         await t_controler.drop_message(general)
 
 class Bot(commands.Bot):
@@ -54,7 +56,6 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self.tree.sync()
-#        await eventsub_webhook_example()
         on_stream_online.start()
         print(f"Synced slash commands for {self.user}.")
         
@@ -66,6 +67,7 @@ class SignFlags(commands.FlagConverter):
     ayur_2: int = 0
     dodor_3: int = 0
     takhar_4: int = 0    
+
 
 class TwitchNotificationController():
     message:Message = None
@@ -90,12 +92,11 @@ class TwitchNotificationController():
 t_controler = TwitchNotificationController()
 bot = Bot() 
 
-@bot.hybrid_command(name = "sign", with_app_command = True, description = "Sign")
-async def get_sign(ctx: commands.Context, flags: SignFlags):
+def get_sign_embed(bunti_1, ayur_2, dodor_3, takhar_4) -> Embed:
     #Второй параметр поставить в True, если первый запуск
-    lib = EnoaLibrary(None, True)
+    lib = EnoaLibrary(None, False)
     color = discord.Color
-    signsResponce = lib.GetSign(flags.bunti_1, flags.ayur_2, flags.dodor_3, flags.takhar_4)
+    signsResponce = lib.GetSign(bunti_1, ayur_2, dodor_3, takhar_4)
     sign = signsResponce.Result
     if(sign != None):
         desc = f"\
@@ -108,7 +109,25 @@ async def get_sign(ctx: commands.Context, flags: SignFlags):
         "
         embed = Embed(title=sign.Name, color=color.blue(), description=desc)
     else:
-        embed = Embed(title="Ошибка", color=color.red(), description="Не было обнаружено знамение по переданным данным")    
+        embed = Embed(title="Ошибка", color=color.red(), description=f"Не было обнаружено знамение по переданным данным {bunti_1}, {ayur_2}, {dodor_3}, {takhar_4}")   
+    return embed
+
+@bot.hybrid_command(name = "rsign", with_app_command = True, description = "Random Sign")
+async def get_rsign(ctx: commands.Context):
+
+    lib = EnoaLibrary(None, False)
+    allSignsResponce = lib.GetSigns()
+    signs = allSignsResponce.Result
+    rnum = random.randint(0, signs.Count - 1)
+    rsign = signs[rnum]
+
+    embed = get_sign_embed(rsign.Bunti, rsign.Ayur, rsign.Dodor, rsign.Takhar)
+    await ctx.defer(ephemeral = False)
+    await ctx.send(embed=embed) 
+
+@bot.hybrid_command(name = "sign", with_app_command = True, description = "Sign")
+async def get_sign(ctx: commands.Context, flags: SignFlags):
+    embed = get_sign_embed(flags.bunti_1, flags.ayur_2, flags.dodor_3, flags.takhar_4)
     await ctx.defer(ephemeral = False)
     await ctx.send(embed=embed) 
 
