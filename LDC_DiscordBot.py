@@ -35,7 +35,7 @@ from System.Collections.Generic import *
 from System import *
 
 
-@tasks.loop(seconds=1)
+@tasks.loop(seconds=5)
 async def on_stream_online():
     general = bot.get_channel(int(Data.TwitcGeneralChannelID))
     stream = twich.checkIfLive(Data.TwitchUsersLoggins)
@@ -116,12 +116,12 @@ def get_sign_embed(bunti_1, ayur_2, dodor_3, takhar_4) -> Embed:
     sign = signsResponce.Result
     if(sign != None):
         desc = f"\
-        Кости: ({sign.Bunti}, {sign.Ayur}, {sign.Dodor}, {sign.Takhar}) \n\n \
-        Сложность: {sign.Difficult} \n\n \
-        {sign.Description } \n\n \
-        Эффект: {sign.Effect} \n\n \
-        Успех: {sign.Success} \n\n \
-        Провал: {sign.Failure} \n\n \
+        **Кости:** ({sign.Bunti}, {sign.Ayur}, {sign.Dodor}, {sign.Takhar}) \n\n \
+        **Сложность:** {sign.Difficult} \n\n \
+        *{sign.Description }* \n\n \
+        **Эффект:** {sign.Effect} \n\n \
+        **Успех:** {sign.Success} \n\n \
+        **Провал:** {sign.Failure} \n\n \
         "
         embed = Embed(title=sign.Name, color=color.blue(), description=desc)
     else:
