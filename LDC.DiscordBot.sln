@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LDC.DiscordBot", "LDC.DiscordBot.pyproj", "{692DB017-87A3-47C4-9FF7-0FA3167AD770}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LDC.DiscordBot", "LDC_DiscordBot.pyproj", "{692DB017-87A3-47C4-9FF7-0FA3167AD770}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,7 +8,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "LDC.DiscordBot.py",
+            "program": "LDC_DiscordBot.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }
