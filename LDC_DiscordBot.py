@@ -5,6 +5,9 @@ import clr
 import os
 import asyncio
 import twich
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 from discord.colour import Color
 from discord.embeds import Embed
 from discord.message import Message
@@ -32,7 +35,7 @@ from System.Collections.Generic import *
 from System import *
 
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=1)
 async def on_stream_online():
     general = bot.get_channel(int(Data.TwitcGeneralChannelID))
     stream = twich.checkIfLive(Data.TwitchUsersLoggins)
@@ -75,18 +78,31 @@ class TwitchNotificationController():
     def get_message(self):
         return self.message
 
+    def get_stream_date(self, stream):
+        date_diff =datetime.now(timezone.utc).replace(tzinfo=None) - datetime.strptime(stream.started_at, '%Y-%m-%dT%H:%M:%SZ')
+        td = timedelta(seconds=date_diff.seconds)
+        stream_date = datetime.strptime(str(td), "%H:%M:%S")
+        return stream_date
+
+    def get_stream_message(self, stream):
+        stream_date = self.get_stream_date(stream)
+        return f"{Data.TwitchStreamUpMessage} \
+                \n :game_die: **{stream.title}** \
+                \n :busts_in_silhouette: Зрителей: **{stream.viewer_count}** \
+                \n :stopwatch: Стрим продолжается: `{stream_date.hour}:{stream_date.minute}:{stream_date.second}`"
+
     async def send_message(self, general, stream):
-        self.message = await general.send(f"{Data.TwitchStreamUpMessage} \n :game_die: Играем в: **{stream.game}** \n :busts_in_silhouette: Зрителей: **{stream.viewer_count}**")
+        self.message = await general.send(self.get_stream_message(stream))
     
     async def edit_message(self, stream):
-        await self.message.edit(content=f"{Data.TwitchStreamUpMessage} \n :game_die: Играем в: **{stream.game}** \n :busts_in_silhouette: Зрителей: **{stream.viewer_count}**")
+        await self.message.edit(content=self.get_stream_message(stream))
 
 
     async def drop_message(self, general):
         if(self.message != None):
             await self.message.delete()
             self.message = None
-            await general.send(content=f"Трансляция завершилась, спасибо всем за участие :purple_heart: ")
+            #await general.send(content=f"Трансляция завершилась, спасибо всем за участие :purple_heart: ")
 
 
 t_controler = TwitchNotificationController()

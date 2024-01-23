@@ -3,11 +3,12 @@ import Data
  
 class Stream:
  
-    def __init__(self, title, streamer, game, viewer_count):
+    def __init__(self, title, streamer, game, viewer_count, started_at):
         self.title = title
         self.streamer = streamer
         self.viewer_count = viewer_count
         self.game = game
+        self.started_at = started_at
         
 # getting the auth token from the twitch API
 def getOAuthToken():
@@ -44,7 +45,8 @@ def checkIfLive(channel):
             streamer = data['user_name']
             game = data['game_name']
             viewer_count = data['viewer_count']
-            stream = Stream(title, streamer, game, viewer_count)
+            started_at = data["started_at"]
+            stream = Stream(title, streamer, game, viewer_count, started_at)
             return stream
         else:
             return "OFFLINE"
